@@ -42,6 +42,8 @@ def ssim(
     value_range: float = 1.0,
     k1: float = 0.01,
     k2: float = 0.03,
+    #Add SSIM modifier flag
+    ssim_modifier = False,
 ) -> Tuple[Tensor, Tensor]:
     r"""Returns the SSIM and Contrast Sensitivity (CS) between :math:`x` and :math:`y`.
 
@@ -116,6 +118,12 @@ def ssim(
 
     # Structural similarity (SSIM)
     ss = (2 * mu_xy + c1) / (mu_xx + mu_yy + c1) * cs
+    
+    ### SSIM Modifier code
+    if ssim_modifier == True:
+        print("using modified SSIM")
+    if ssim_modifier != True:
+        print("using default SSIM")        
 
     # Average
     if channel_avg:
@@ -234,6 +242,9 @@ class SSIM(nn.Module):
 
         self.reduction = reduction
         self.value_range = kwargs.get('value_range', 1.0)
+        
+        # Add SSIM modifier flag
+        #self.ssim_modifier = kwargs.get('ssim_modifier', False)
         self.kwargs = kwargs
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
@@ -252,6 +263,8 @@ class SSIM(nn.Module):
             dim_range=(3, 5),
             n_channels=self.kernel.shape[0],
             value_range=(0.0, self.value_range),
+            # Add SSIM modifier flag
+            #ssim_modified=self.ssim_modifier,
         )
 
         l = ssim(x, y, kernel=self.kernel, **self.kwargs)[0]
