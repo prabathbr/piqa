@@ -117,13 +117,15 @@ def ssim(
     cs = (2 * sigma_xy + c2) / (sigma_xx + sigma_yy + c2)
 
     # Structural similarity (SSIM)
-    ss = (2 * mu_xy + c1) / (mu_xx + mu_yy + c1) * cs
+    #ss = (2 * mu_xy + c1) / (mu_xx + mu_yy + c1) * cs
     
     ### SSIM Modifier code
     if ssim_modifier == True:
         print("using modified SSIM")
+        ss = cs
     if ssim_modifier != True:
-        print("using default SSIM")        
+        print("using default SSIM")
+        ss = (2 * mu_xy + c1) / (mu_xx + mu_yy + c1) * cs
 
     # Average
     if channel_avg:
