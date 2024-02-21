@@ -112,6 +112,11 @@ def ssim(
     sigma_xx = channel_convs(x ** 2, window, pad) - mu_xx
     sigma_yy = channel_convs(y ** 2, window, pad) - mu_yy
     sigma_xy = channel_convs(x * y, window, pad) - mu_xy
+    
+    epsilon  = 1e-8
+    
+    sigma_x = torch.sqrt(sigma_xx+epsilon)#sigma_xx**0.5
+    sigma_y = torch.sqrt(sigma_yy+epsilon)#sigma_yy**0.5    
 
     # Contrast sensitivity (CS)
     cs = (2 * sigma_xy + c2) / (sigma_xx + sigma_yy + c2)
@@ -121,8 +126,9 @@ def ssim(
     
     ### SSIM Modifier code
     if ssim_modifier == True:
-        print("using modified SSIM")
-        ss = cs
+        print("using modified SSIM s(x)")
+        sxy = (2 * sigma_x * sigma_y)
+        ss = (2 * sigma_xy + c2) / (sxy + c2)
     if ssim_modifier != True:
         print("using default SSIM")
         ss = (2 * mu_xy + c1) / (mu_xx + mu_yy + c1) * cs
